@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Brain · clickable prototype</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1c1c1e;--mute:#6b6b70;--line:#e6e6e3;--brand:#5b4bff;--brand2:#eeebff;--ok:#12a150;--okbg:#e7f7ee;--warn:#b7791f;--warnbg:#fdf3e1;--bad:#d64545;--badbg:#fdecec;--r:12px}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:var(--brand)}button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+aside{background:#fbfbfa;border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{display:flex;gap:8px;align-items:center;font-weight:700;margin-bottom:4px}.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#5b4bff,#a78bfa);display:inline-block}
+.sub{color:var(--mute);font-size:12px;margin-bottom:16px}
+.nav button{display:flex;width:100%;gap:8px;align-items:center;background:none;border:0;text-align:left;padding:7px 8px;border-radius:8px;color:var(--ink)}
+.nav button:hover{background:#f0f0ee}.nav button.on{background:var(--brand2);color:var(--brand);font-weight:600}
+.nav .tag{font-size:11px;font-weight:700;color:var(--mute);min-width:24px}.nav button.on .tag{color:var(--brand)}
+.nav .done::after{content:"✓";margin-left:auto;color:var(--ok);font-size:12px}
+.side-note{margin-top:18px;font-size:12px;color:var(--mute);border-top:1px solid var(--line);padding-top:12px}
+main{padding:0 0 60px}
+.top{display:flex;align-items:center;gap:10px;padding:12px 28px;border-bottom:1px solid var(--line);background:rgba(247,247,245,.9);position:sticky;top:0;backdrop-filter:blur(6px);z-index:5}
+.badge{font-size:11px;font-weight:700;background:var(--ink);color:#fff;border-radius:6px;padding:2px 7px}
+.top .t{font-weight:600}.top .sp{flex:1}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px}.btn:hover{border-color:#ccc}
+.btn.p{background:var(--brand);border-color:var(--brand);color:#fff}.btn.p:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed}.btn.s{padding:5px 10px;font-size:13px}.btn.g{background:var(--okbg);border-color:#bfe8cf;color:var(--ok)}
+.wrap{max-width:1040px;margin:0 auto;padding:28px}
+h1{font-size:28px;margin:0 0 6px;letter-spacing:-.02em}h2{font-size:20px;margin:0 0 4px}h3{font-size:15px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:#f0f0ee;color:var(--mute);margin-right:4px}
+.pill.ok{background:var(--okbg);color:var(--ok)}.pill.warn{background:var(--warnbg);color:var(--warn)}.pill.bad{background:var(--badbg);color:var(--bad)}.pill.b{background:var(--brand2);color:var(--brand)}
+.src{font-size:12px;color:var(--mute)}.src b{color:var(--ink);font-weight:500}
+input[type=text],input[type=email],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;background:#fff}
+input:focus,textarea:focus{outline:2px solid var(--brand2);border-color:var(--brand)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;padding:24px 0}
+.hero h1{font-size:40px;line-height:1.1}
+.drop{border:2px dashed #cfcfe8;border-radius:var(--r);padding:28px;text-align:center;background:#fcfcff}
+.drop.hover{background:var(--brand2);border-color:var(--brand)}
+.bar{height:8px;background:#ececf3;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5b4bff,#a78bfa);transition:width .4s}
+.steps li{margin:6px 0;color:var(--mute)}.steps li.on{color:var(--ink)}.steps li.ok{color:var(--ok)}
+.fact{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.fact:last-child{border:0}
+.fact .k{min-width:150px;color:var(--mute);font-size:13px}.fact .v{flex:1}
+.tool{display:flex;align-items:center;gap:12px;padding:14px}.tool .ic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-weight:700;color:#fff}
+.tool .nm{flex:1}.sw{width:42px;height:24px;border-radius:99px;background:#ddd;position:relative;border:0;transition:.2s}.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--brand)}.sw.on::after{left:21px}
+.tpl{cursor:pointer;transition:.15s}.tpl:hover{border-color:var(--brand);transform:translateY(-1px)}
+.tpl .n{font-size:26px;font-weight:700;letter-spacing:-.02em}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:500}
+.conf{margin-bottom:14px}.opt{border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer}.opt:hover{border-color:var(--brand)}.opt.sel{border-color:var(--brand);background:var(--brand2)}
+.resolved{opacity:.65}
+.chat{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:420px}
+.msgs{flex:1;overflow:auto;padding:6px 2px}.m{max-width:78%;margin:8px 0;padding:10px 14px;border-radius:14px}
+.m.u{margin-left:auto;background:var(--brand);color:#fff;border-bottom-right-radius:4px}.m.a{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
+.cite{display:block;margin-top:8px;font-size:12px;color:var(--mute);border-top:1px solid var(--line);padding-top:6px}
+.sugg button{margin:0 6px 6px 0}
+.row{display:flex;gap:8px;align-items:center}
+.hide{display:none!important}
+.drawer{position:fixed;right:0;top:0;height:100vh;width:360px;background:#fff;border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.06);padding:20px;z-index:20;transform:translateX(100%);transition:.25s;display:flex;flex-direction:column;gap:10px}
+.drawer.open{transform:none}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;z-index:30;pointer-events:none}.toast.show{opacity:1}
+.detail{margin-top:16px}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.mini{font-size:12px;color:var(--mute)}
+.banner{background:var(--warnbg);border:1px solid #f3dcae;color:#7a5213;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px}
+.fict{font-size:11px;color:var(--mute)}
+@media(max-width:860px){.app{grid-template-columns:1fr}aside{position:static;height:auto}.g2,.g3,.hero{grid-template-columns:1fr}.drawer{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <div class="logo"><i></i>Product Brain</div>
+  <div class="sub">Clickable prototype · working name</div>
+  <div class="nav" id="nav"></div>
+  <div class="side-note">Every screen has a label (S1–S9). Use <b>Leave feedback</b> at the top to note thoughts per screen, then copy them all in one go.<br><br><span class="fict">All companies, people and data here are fictional.</span></div>
+</aside>
+<main>
+  <div class="top"><span class="badge" id="sLabel">S1</span><span class="t" id="sTitle"></span><span class="sp"></span>
+    <button class="btn s" onclick="prev()">← Back</button><button class="btn s" onclick="next()">Next →</button>
+    <button class="btn s p" onclick="openFb()">✎ Leave feedback</button></div>
+
+<!-- S1 -->
+<section data-s="1" data-t="Landing and sign-up"><div class="wrap">
+  <div class="hero"><div>
+    <span class="pill b">For heads of product</span>
+    <h1>Your product knowledge, always up to date.</h1>
+    <p class="lead" style="font-size:16px">A living copy of what your product does now, where it's heading in the next 3–6 months, and why. Sales, support and bid teams get sourced, dated answers without pinging you.</p>
+    <div class="row" style="gap:16px;flex-wrap:wrap" class="mini">
+      <span class="mini">✓ Works with Teams, Slack, Jira, Confluence, Google Drive and email</span>
+      <span class="mini">✓ Value in your first five minutes</span>
+      <span class="mini">✓ No IT project</span></div>
+  </div>
+  <div class="card"><h3>Start free</h3><p class="mini" style="margin-top:0">One owner pays. Everyone you invite asks for free.</p>
+    <label class="mini">Work email</label><input type="email" id="email" placeholder="you@company.com" value="maya@quillstack.example">
+    <div style="height:10px"></div><label class="mini">Your role</label>
+    <select id="role"><option>Head of product</option><option>Product manager</option><option>Founder</option><option>Other</option></select>
+    <div style="height:14px"></div><button class="btn p" style="width:100%" onclick="go(2)">Create my product brain →</button>
+    <p class="mini" style="text-align:center;margin:10px 0 0">Or continue with Google · Microsoft</p></div></div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card"><h3>1. Drop in your website</h3><p class="mini">We read your public site or a brochure and draft your product profile in under a minute.</p></div>
+    <div class="card"><h3>2. Connect your tools</h3><p class="mini">One sweep across chats, tickets and docs finds feedback themes, backlog health and conflicts.</p></div>
+    <div class="card"><h3>3. Keep it true</h3><p class="mini">Every fact is sourced and dated. A two-minute weekly review keeps old answers from sneaking back.</p></div></div>
+</div></section>
+
+<!-- S2 -->
+<section data-s="2" data-t="Instant first hit: drop in a website or brochure"><div class="wrap">
+  <h1>Let's start with what's already public</h1><p class="lead">No logins needed yet. Paste your website or drop a brochure, deck or datasheet.</p>
+  <div class="grid g2">
+    <div class="card"><h3>Website</h3><input type="text" id="url" value="https://quillstack.example"><p class="mini">We'll read the homepage, pricing, features, release notes and help centre.</p></div>
+    <div class="card drop" id="drop"><h3>Brochure or deck</h3><p class="mini">Drag a PDF, PPTX or DOCX here</p><button class="btn s" onclick="fakeFile()">Choose file</button><p class="mini" id="fileName"></p></div>
+  </div>
+  <div style="height:16px"></div>
+  <button class="btn p" id="sweepBtn" onclick="runSweep()">Build my product profile</button>
+  <div class="card hide" id="sweepCard" style="margin-top:18px">
+    <div class="row"><h3 style="flex:1;margin:0">Reading your sources…</h3><span class="mini" id="pct">0%</span></div>
+    <div style="height:10px"></div><div class="bar"><i id="barI"></i></div>
+    <ul class="steps" id="steps"></ul>
+    <button class="btn p hide" id="seeProfile" onclick="go(3)">See my product profile →</button>
+  </div>
+</div></section>
+
+<!-- S3 -->
+<section data-s="3" data-t="Instant product profile (sourced and dated)"><div class="wrap">
+  <div class="row"><div style="flex:1"><h1>Quillstack: product profile</h1><p class="lead">Drafted in 47 seconds from 23 public pages and 1 brochure. Each fact shows where it came from and when.</p></div>
+  <button class="btn" onclick="toast('Exported as a PDF one-pager (prototype)')">Export</button></div>
+  <div class="banner">⚠ 2 facts disagree between your website and your brochure. You'll be able to settle them once your tools are connected (S6).</div>
+  <div class="grid g2">
+  <div class="card"><h3>What it does now</h3><div id="profileFacts"></div></div>
+  <div class="card"><h3>Who it's for</h3>
+    <div class="fact"><div class="v">Small creative agencies (5–50 people) that bill by project<div class="src">Source: <b>quillstack.example/customers</b> · 12 Sep 2026</div></div></div>
+    <div class="fact"><div class="v">Freelancers moving up to a small team<div class="src">Source: <b>Brochure 2026 p.2</b> · Mar 2026</div></div></div>
+    <h3 style="margin-top:16px">Tender and sales answers drafted</h3>
+    <p class="mini">10 starter answers ready for review, e.g. "Do you support SSO?", "Where is data hosted?"</p>
+    <button class="btn s" onclick="go(5);openTpl('faq')">Review the FAQ pack</button>
+  </div></div>
+  <div style="height:16px"></div>
+  <div class="card row" style="background:var(--brand2);border-color:#d9d3ff"><div style="flex:1"><h3 style="margin:0">This is what the outside world sees. Now let's see what your team knows.</h3><p class="mini" style="margin:4px 0 0">Connect your tools to add the roadmap, customer feedback and the "why".</p></div><button class="btn p" onclick="go(4)">Connect tools →</button></div>
+</div></section>
+
+<!-- S4 -->
+<section data-s="4" data-t="Connect your tools (works with any stack)"><div class="wrap">
+  <h1>Connect where your product truth lives</h1><p class="lead">Pick any mix. Read-only. You choose which channels and projects are included, and private one-to-one messages are never read.</p>
+  <div class="grid g2" id="tools"></div>
+  <div style="height:16px"></div>
+  <div class="row"><button class="btn p" id="runSweep2" onclick="startSweep2()">Run first sweep</button><span class="mini" id="toolCount"></span></div>
+  <div class="card hide" id="sweep2" style="margin-top:16px"><div class="row"><h3 style="flex:1;margin:0" id="sw2t">Sweeping…</h3><span class="mini" id="pct2"></span></div><div style="height:8px"></div><div class="bar"><i id="bar2"></i></div></div>
+</div></section>
+
+<!-- S5 -->
+<section data-s="5" data-t="First-sweep dashboard"><div class="wrap">
+  <h1>Your first sweep</h1><p class="lead">From 4,812 messages, 1,206 tickets and 318 docs over the last 90 days. Click any card.</p>
+  <div class="grid g3" id="tpls"></div>
+  <div class="card detail hide" id="tplDetail"></div>
+</div></section>
+
+<!-- S6 -->
+<section data-s="6" data-t="Which is true now? Conflict review"><div class="wrap">
+  <div class="row"><div style="flex:1"><h1>Which is true now?</h1><p class="lead">Sources disagree. Pick the right one, fix it, or approve the newest. Your choice becomes the answer everyone gets.</p></div><span class="pill warn" id="confLeft"></span></div>
+  <div id="conflicts"></div>
+</div></section>
+
+<!-- S7 -->
+<section data-s="7" data-t="Ask the brain (chat with cited, dated answers)"><div class="wrap">
+  <div class="row"><div style="flex:1"><h1 style="margin-bottom:0">Ask the brain</h1><p class="mini" style="margin:2px 0 12px">Viewing as: <select id="asker" style="width:auto;padding:3px 8px" onchange="toast('Answers now tuned for '+this.value)"><option>Sales (free asker)</option><option>Support (free asker)</option><option>Bid writer (free asker)</option><option>Head of product (owner)</option></select></p></div></div>
+  <div class="card chat"><div class="msgs" id="msgs"></div>
+    <div class="sugg" id="sugg"></div>
+    <div class="row"><input type="text" id="q" placeholder="Ask about features, roadmap, pricing, security…" onkeydown="if(event.key==='Enter')ask()"><button class="btn p" onclick="ask()">Ask</button></div></div>
+</div></section>
+
+<!-- S8 -->
+<section data-s="8" data-t="Weekly review: approve or fix"><div class="wrap">
+  <div class="row"><div style="flex:1"><h1>Your weekly review</h1><p class="lead">Week of 23 Nov 2026 · about 2 minutes. What changed, what's going stale, and what people asked that we couldn't answer.</p></div><span class="pill b" id="revLeft"></span></div>
+  <div class="grid g3" style="margin-bottom:14px">
+    <div class="card"><div class="mini">Questions answered</div><div class="tpl n" style="cursor:default">138</div><div class="mini">≈ 9 hours of your time saved</div></div>
+    <div class="card"><div class="mini">Answer confidence</div><div class="tpl n" style="cursor:default">94%</div><div class="mini">up from 81% after S6 fixes</div></div>
+    <div class="card"><div class="mini">Unanswered questions</div><div class="tpl n" style="cursor:default">3</div><div class="mini">routed to you below</div></div></div>
+  <div class="card" id="review"></div>
+</div></section>
+
+<!-- S9 -->
+<section data-s="9" data-t="Share with free askers"><div class="wrap">
+  <h1>Invite the people who keep asking you</h1><p class="lead">Askers are free. You stay the owner, so only you (and editors you choose) can change what's true.</p>
+  <div class="grid g2">
+  <div class="card"><h3>Invite by email</h3><div class="row"><input type="email" id="inv" placeholder="name@company.com"><select id="invRole" style="width:140px"><option>Asker</option><option>Editor</option></select><button class="btn p" onclick="invite()">Invite</button></div>
+    <div style="height:10px"></div><table id="invTable"><tr><th>Person</th><th>Role</th><th>Status</th></tr></table></div>
+  <div class="card"><h3>Or put it where they already work</h3>
+    <div class="fact"><div class="v">Teams or Slack bot: <b>@productbrain</b> in #sales and #support</div><button class="btn s" onclick="this.textContent='Added ✓';toast('Bot added to #sales (prototype)')">Add</button></div>
+    <div class="fact"><div class="v">Share link (view and ask only)</div><button class="btn s" onclick="toast('Link copied (prototype)')">Copy</button></div>
+    <div class="fact"><div class="v">Tender tools such as Loopio <span class="pill">Later</span></div><button class="btn s" disabled>Soon</button></div>
+    <div class="fact"><div class="v">Route to other experts (e.g. security lead) <span class="pill">Later</span></div><button class="btn s" disabled>Soon</button></div>
+    <h3 style="margin-top:12px">Plan</h3><p class="mini" style="margin:0">Free: 1 owner, up to 5 askers, 100 answers a month. <b>Pro £39/month</b>: unlimited askers, 2,000 answers, weekly review. Example pricing only.</p></div></div>
+  <div style="height:16px"></div>
+  <div class="card row" style="background:var(--okbg);border-color:#bfe8cf"><div style="flex:1"><h3 style="margin:0">That's the whole journey 🎉</h3><p class="mini" style="margin:4px 0 0">Click <b>Leave feedback</b> to note anything, or <b>Copy all feedback</b> in the drawer to paste it back to me.</p></div><button class="btn" onclick="go(1)">Start again</button></div>
+</div></section>
+</main></div>
+
+<div class="drawer" id="fb"><div class="row"><h3 style="flex:1;margin:0">Feedback on <span id="fbLabel"></span></h3><button class="btn s" onclick="closeFb()">✕</button></div>
+  <p class="mini" style="margin:0">Saved in this browser only. Notes are kept per screen.</p>
+  <textarea id="fbText" rows="8" placeholder="What works, what's confusing, what's missing?"></textarea>
+  <div class="row"><button class="btn p" onclick="saveFb()">Save note</button><button class="btn" onclick="copyFb()">Copy all feedback</button></div>
+  <div id="fbList" class="mini" style="overflow:auto;flex:1"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const S=$$('section');let cur=1;const seen=new Set([1]);
+function nav(){$('#nav').innerHTML=S.map(s=>`<button class="${+s.dataset.s===cur?'on':''} ${seen.has(+s.dataset.s)&&+s.dataset.s!==cur?'done':''}" onclick="go(${s.dataset.s})"><span class="tag">S${s.dataset.s}</span>${s.dataset.t.split(' (')[0].split(':')[0]}</button>`).join('')}
+function go(n){cur=n;seen.add(n);S.forEach(s=>s.classList.toggle('hide',+s.dataset.s!==n));const s=S[n-1];$('#sLabel').textContent='S'+n;$('#sTitle').textContent=s.dataset.t;$('#fbLabel').textContent='S'+n;nav();scrollTo(0,0);location.hash='s'+n;if(n===7&&!$('#msgs').children.length)initChat();}
+function next(){if(cur<9)go(cur+1)}function prev(){if(cur>1)go(cur-1)}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)}
+
+// S2 sweep
+function fakeFile(){$('#fileName').textContent='📄 Quillstack-Brochure-2026.pdf · 14 pages';toast('Brochure added')}
+const dz=$('#drop');['dragover','dragenter'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('hover')}));['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('hover');if(e==='drop'){const f=ev.dataTransfer.files[0];$('#fileName').textContent='📄 '+(f?f.name:'file')}}));
+const st1=['Crawling 23 pages on your site','Reading brochure (14 pages)','Pulling out features, plans and integrations','Dating every fact by its source','Spotting disagreements between sources','Drafting 10 sales and tender answers'];
+function runSweep(){$('#sweepCard').classList.remove('hide');$('#sweepBtn').disabled=true;$('#steps').innerHTML=st1.map(s=>`<li>${s}</li>`).join('');let i=0;const li=$$('#steps li');const t=setInterval(()=>{if(i>0)li[i-1].className='ok',li[i-1].textContent='✓ '+st1[i-1];if(i<li.length)li[i].className='on';const p=Math.round(i/li.length*100);$('#barI').style.width=p+'%';$('#pct').textContent=p+'%';if(i===li.length){clearInterval(t);$('#seeProfile').classList.remove('hide');$('#sweepBtn').disabled=false}i++},650)}
+
+// S3 profile
+const facts=[['Core job','Turns project time and expenses into client-ready invoices','quillstack.example','12 Sep 2026','ok'],['Plans','Starter £12, Team £29, Studio £59 per month','quillstack.example/pricing','03 Nov 2026','ok'],['Integrations','Xero, QuickBooks, Stripe, Google Calendar','Brochure 2026 p.6','Mar 2026','ok'],['Single sign-on','Studio plan only','quillstack.example/pricing','03 Nov 2026','warn'],['Data hosting','EU (Frankfurt)','Brochure 2026 p.11','Mar 2026','warn'],['Mobile app','iOS and Android timers','Help centre','21 Aug 2026','ok']];
+$('#profileFacts').innerHTML=facts.map(f=>`<div class="fact"><div class="k">${f[0]}</div><div class="v">${f[1]} ${f[4]==='warn'?'<span class="pill warn">conflict</span>':''}<div class="src">Source: <b>${f[2]}</b> · ${f[3]}</div></div></div>`).join('');
+
+// S4 tools
+const tools=[['Microsoft Teams','#5059c9','T',1],['Slack','#4a154b','S',0],['Jira','#0052cc','J',1],['Confluence','#172b4d','C',0],['Google Drive','#1fa463','G',1],['Email (support inbox)','#ea4335','@',0],['Intercom / Zendesk','#1f8ded','I',0],['Release notes RSS','#f59e0b','R',1]];
+function renderTools(){$('#tools').innerHTML=tools.map((t,i)=>`<div class="card tool"><div class="ic" style="background:${t[1]}">${t[2]}</div><div class="nm"><b>${t[0]}</b><div class="mini">${t[3]?'Connected · read-only':'Not connected'}</div></div><button class="sw ${t[3]?'on':''}" onclick="tools[${i}][3]^=1;renderTools()"></button></div>`).join('');const n=tools.filter(t=>t[3]).length;$('#toolCount').textContent=n+' of '+tools.length+' connected';$('#runSweep2').disabled=!n}
+renderTools();
+function startSweep2(){$('#sweep2').classList.remove('hide');let p=0;const labels=['Reading channels and meeting chats…','Reading Jira projects…','Reading docs…','Grouping feedback into themes…','Matching requests to tickets…','Done'];const t=setInterval(()=>{p+=10;$('#bar2').style.width=p+'%';$('#pct2').textContent=p+'%';$('#sw2t').textContent=labels[Math.min(5,Math.floor(p/20))];if(p>=100){clearInterval(t);setTimeout(()=>go(5),400)}},220)}
+
+// S5 templates
+const T={
+feedback:{t:'Customer feedback themes',n:'7 themes',d:'From 412 customer mentions',html:`<table><tr><th>Theme</th><th>Mentions</th><th>Trend</th><th>Example quote</th></tr>
+<tr><td>Recurring invoices</td><td>86</td><td><span class="pill bad">↑ 40%</span></td><td>"We rebuild the same retainer invoice every month." <div class="src">#customer-voice · 18 Nov 2026</div></td></tr>
+<tr><td>Multi-currency</td><td>54</td><td><span class="pill warn">↑ 12%</span></td><td>"Our US clients want dollars." <div class="src">Support inbox · 9 Nov 2026</div></td></tr>
+<tr><td>Timer on mobile drops sessions</td><td>41</td><td><span class="pill">→</span></td><td>"Lost two hours of tracking yesterday." <div class="src">Teams · Support channel · 21 Nov 2026</div></td></tr>
+<tr><td>Client portal branding</td><td>23</td><td><span class="pill ok">↓ 5%</span></td><td>"Can we put our logo on it?" <div class="src">Sales call notes · 2 Nov 2026</div></td></tr></table>`},
+requests:{t:'Requests versus backlog',n:'19 untracked',d:'of 64 distinct requests',html:`<div class="kpi"><span class="pill ok">31 in Jira</span><span class="pill warn">14 similar ticket</span><span class="pill bad">19 not tracked</span></div><table><tr><th>Request</th><th>Asked by</th><th>Status</th><th></th></tr>
+<tr><td>Recurring invoices</td><td>86 mentions, 12 accounts</td><td><span class="pill ok">QS-412 · In progress</span></td><td></td></tr>
+<tr><td>Bulk edit time entries</td><td>17 mentions</td><td><span class="pill warn">Similar: QS-388</span></td><td><button class="btn s" onclick="toast('Linked to QS-388')">Link</button></td></tr>
+<tr><td>Export to CSV per client</td><td>11 mentions</td><td><span class="pill bad">Not tracked</span></td><td><button class="btn s" onclick="toast('Draft ticket created in Jira (prototype)')">Create ticket</button></td></tr></table>`},
+health:{t:'Backlog health',n:'C+',d:'Stale work is the main drag',html:`<div class="grid g3"><div class="card"><div class="mini">Stale (90+ days untouched)</div><div class="tpl n" style="cursor:default">212</div></div><div class="card"><div class="mini">Blocked or unassigned</div><div class="tpl n" style="cursor:default">37</div></div><div class="card"><div class="mini">Bugs : features</div><div class="tpl n" style="cursor:default">1 : 2.4</div></div></div><p class="mini">Median ticket age 143 days. 3 epics have no tickets moved this quarter. <a href="#" onclick="toast('Suggested 120 tickets to archive (prototype)');return false">Suggest a clean-up</a></p>`},
+profile:{t:'What we say we do now',n:'42 facts',d:'2 conflicts to settle',html:`<p>Your public profile from S2, now merged with internal docs. 42 facts, each sourced and dated.</p><button class="btn s" onclick="go(3)">Open profile (S3)</button>`},
+roadmap:{t:'Draft 3–6 month roadmap',n:'3 bets',d:'As the backlog shows it',html:`<table><tr><th>When</th><th>Bet</th><th>Why (from sources)</th><th>Confidence</th></tr>
+<tr><td>Dec–Jan</td><td>Recurring invoices</td><td>Top feedback theme; QS-412 epic 60% done <div class="src">Jira · 24 Nov 2026</div></td><td><span class="pill ok">High</span></td></tr>
+<tr><td>Feb–Mar</td><td>Multi-currency</td><td>Mentioned in Q1 planning doc <div class="src">Drive · Planning Q1 2027 · 4 Nov 2026</div></td><td><span class="pill warn">Medium</span></td></tr>
+<tr><td>Apr–May</td><td>Client portal v2</td><td>Only one doc mentions it, no tickets yet</td><td><span class="pill bad">Low</span></td></tr></table><p class="mini">This is a draft. Correct it once and the brain keeps it current.</p><button class="btn s g" onclick="toast('Roadmap approved')">Approve draft</button>`},
+conflicts:{t:'Conflicting claims',n:'4 to settle',d:'Same fact, different answers',html:`<p>The same fact appears with different answers in different places. Settle each one once.</p><button class="btn s p" onclick="go(6)">Review conflicts (S6)</button>`},
+faq:{t:'Sales FAQ starter pack',n:'10 answers',d:'Ready for one-click review',html:`<table id="faqT"></table>`}};
+function renderTpls(){$('#tpls').innerHTML=Object.entries(T).map(([k,v])=>`<div class="card tpl" onclick="openTpl('${k}')"><div class="mini">${v.t}</div><div class="n">${v.n}</div><div class="mini">${v.d}</div></div>`).join('')}
+renderTpls();
+const faqs=[['Do you support single sign-on?','Yes, on the Studio plan (SAML via Google and Microsoft).','Pricing page · 3 Nov 2026'],['Where is customer data hosted?','In the EU (Frankfurt), with a UK option planned.','Security doc · 14 Oct 2026'],['Can we bill in more than one currency?','Not yet. Planned for Feb–Mar 2027.','Planning Q1 2027 · 4 Nov 2026'],['Is there a mobile app?','Yes, iOS and Android timers.','Help centre · 21 Aug 2026']];
+function openTpl(k){const d=$('#tplDetail');d.classList.remove('hide');d.innerHTML=`<div class="row"><h2 style="flex:1">${T[k].t}</h2><button class="btn s" onclick="$('#tplDetail').classList.add('hide')">Close</button></div><div style="height:10px"></div>${T[k].html}`;if(k==='faq'){$('#faqT').innerHTML='<tr><th>Question</th><th>Draft answer</th><th></th></tr>'+faqs.map((f,i)=>`<tr><td>${f[0]}</td><td>${f[1]}<div class="src">${f[2]}</div></td><td style="white-space:nowrap"><button class="btn s g" onclick="this.parentNode.innerHTML='<span class=\\'pill ok\\'>Approved</span>'">Approve</button> <button class="btn s" onclick="toast('Edit mode (prototype)')">Edit</button></td></tr>`).join('')+'<tr><td colspan=3 class="mini">+ 6 more answers</td></tr>'}d.scrollIntoView({behavior:'smooth',block:'start'})}
+
+// S6 conflicts
+const C=[{f:'Data hosting region',o:[['EU (Frankfurt)','Brochure 2026 p.11','Mar 2026'],['EU (Frankfurt) and UK (London)','#eng-infra · Teams','19 Nov 2026'],['US East','Sales deck v3','Jun 2023']]},
+{f:'Single sign-on availability',o:[['Studio plan only','Pricing page','3 Nov 2026'],['All paid plans','Confluence: Security FAQ','Feb 2025']]},
+{f:'Mobile offline mode',o:[['Coming in Q4 2026','Roadmap slide','Jul 2026'],['Shipped in v4.8','Release notes','12 Nov 2026']]},
+{f:'Max users on Team plan',o:[['10 users','Website','Sep 2026'],['15 users','Jira QS-377 (done)','20 Nov 2026']]}];
+function renderC(){const left=C.filter(c=>!c.done).length;$('#confLeft').textContent=left?left+' left':'All settled ✓';$('#conflicts').innerHTML=C.map((c,i)=>`<div class="card conf ${c.done?'resolved':''}"><div class="row"><h3 style="flex:1;margin:0">${c.f}</h3>${c.done?`<span class="pill ok">Now true: ${c.done}</span><button class="btn s" onclick="C[${i}].done=null;renderC()">Undo</button>`:'<span class="pill warn">Sources disagree</span>'}</div>${c.done?'':`<div class="grid g3" style="margin-top:12px">${c.o.map((o,j)=>`<div class="opt ${c.sel===j?'sel':''}" onclick="C[${i}].sel=${j};renderC()"><b>${o[0]}</b><div class="src">${o[1]} · ${o[2]}</div>${j===newest(c)?'<span class="pill b" style="margin-top:6px">Newest</span>':''}</div>`).join('')}</div>
+<div class="row" style="margin-top:12px"><button class="btn s p" onclick="pick(${i})" ${c.sel==null?'disabled':''}>Use selected source</button><button class="btn s g" onclick="C[${i}].sel=newest(C[${i}]);pick(${i})">Approve newest</button><input type="text" id="fix${i}" placeholder="Or type the correct answer…" style="max-width:280px;padding:6px 10px"><button class="btn s" onclick="fix(${i})">Fix</button></div>`}</div>`).join('')}
+function newest(c){let b=0,bd=0;c.o.forEach((o,j)=>{const d=Date.parse(o[2].length<9?'1 '+o[2]:o[2]);if(d>bd){bd=d;b=j}});return b}
+function pick(i){const c=C[i];c.done=c.o[c.sel][0];renderC();toast('Saved. Older sources marked "no longer true" and kept for history.');if(C.every(c=>c.done))setTimeout(()=>toast('All settled. Answers now use these facts.'),2300)}
+function fix(i){const v=$('#fix'+i).value.trim();if(!v)return toast('Type the correct answer first');C[i].done=v+' (by you, today)';renderC();toast('Fixed by you, dated today')}
+renderC();
+
+// S7 chat
+const A={'sso':['Yes, on the Studio plan. It supports SAML with Google Workspace and Microsoft Entra.',['Pricing page · 3 Nov 2026','Settled in conflict review · 24 Nov 2026'],'High'],
+'host':['Customer data is hosted in the EU (Frankfurt). A UK (London) region went live for new customers on 19 Nov 2026. The 2023 sales deck saying "US East" is out of date and has been retired.',['#eng-infra · Teams · 19 Nov 2026','Brochure 2026 p.11 · Mar 2026'],'High'],
+'roadmap':['Next up: recurring invoices (Dec–Jan, in progress), then multi-currency (Feb–Mar). Client portal v2 is a low-confidence idea for spring, so don\'t promise it to customers yet.',['Jira QS-412 · 24 Nov 2026','Planning Q1 2027 · 4 Nov 2026'],'Medium'],
+'currency':['Not yet. Multi-currency is planned for Feb–Mar 2027. Suggested reply to a customer: "It\'s on our near-term roadmap; we\'ll let you know when it\'s in beta."',['Planning Q1 2027 · 4 Nov 2026','86 related customer mentions'],'Medium'],
+'why':['Recurring invoices came first because it is the fastest-growing feedback theme (86 mentions, up 40%) and it reduces churn among retainer agencies, the most profitable segment.',['Strategy doc: FY27 bets · 1 Oct 2026','Feedback themes sweep · 25 Nov 2026'],'High']};
+const sug=[['Do we support SSO?','sso'],['Where is data hosted?','host'],["What's on the roadmap?",'roadmap'],['Can we bill in dollars?','currency'],['Why are we building recurring invoices first?','why']];
+function initChat(){addMsg('a','Hi! Ask me anything about Quillstack. Every answer shows its sources and dates, and I\'ll tell you when I\'m not sure.');$('#sugg').innerHTML=sug.map(s=>`<button class="btn s" onclick="ask('${s[0].replace(/'/g,"\\'")}')">${s[0]}</button>`).join('')}
+function addMsg(w,t,c,conf){const d=document.createElement('div');d.className='m '+w;d.innerHTML=t+(c?`<span class="cite">📎 ${c.join('<br>📎 ')}<br>Confidence: <b>${conf}</b> · <a href="#" onclick="toast('Flagged to the owner for review');return false">Flag as wrong</a></span>`:'');$('#msgs').appendChild(d);$('#msgs').scrollTop=1e6}
+function ask(q){q=q||$('#q').value.trim();if(!q)return;$('#q').value='';addMsg('u',q);const l=q.toLowerCase();let k=/sso|sign-on|saml/.test(l)?'sso':/host|data|region|gdpr/.test(l)?'host':/why/.test(l)?'why':/roadmap|next|coming/.test(l)?'roadmap':/currenc|dollar|usd|euro/.test(l)?'currency':null;
+setTimeout(()=>{if(k)addMsg('a',A[k][0],A[k][1],A[k][2]);else addMsg('a',"I don't have a confident, current answer for that. I've sent it to Maya (head of product) and you'll get a reply here. It will also appear in her weekly review (S8).",['No source newer than 12 months found'],'Low')},600)}
+
+// S8 review
+const R=[['Changed','Team plan now allows 15 users (was 10)','Jira QS-377 · 20 Nov 2026'],['Changed','Mobile offline mode shipped in v4.8','Release notes · 12 Nov 2026'],['Going stale','"Integrations" list not confirmed for 8 months','Brochure 2026 · Mar 2026'],['Unanswered','"Do you support purchase orders?" asked 3 times by sales','Ask the brain · this week'],['Unanswered','"Is there an API rate limit?"','Ask the brain · 22 Nov 2026'],['New theme','Customers asking for a Xero two-way sync','#customer-voice · 14 mentions']];
+function renderR(){const left=R.filter(r=>!r.d).length;$('#revLeft').textContent=left?left+' to review':'Review done ✓';$('#review').innerHTML='<table><tr><th>Type</th><th>Item</th><th>Source</th><th></th></tr>'+R.map((r,i)=>`<tr class="${r.d?'resolved':''}"><td><span class="pill ${r[0]==='Changed'?'b':r[0]==='Going stale'?'warn':r[0]==='Unanswered'?'bad':''}">${r[0]}</span></td><td>${r[1]}</td><td class="src">${r[2]}</td><td style="white-space:nowrap">${r.d?`<span class="pill ok">${r.d}</span>`:`<button class="btn s g" onclick="R[${i}].d='${r[0]==='Unanswered'?'Answered':'Approved'}';renderR()">${r[0]==='Unanswered'?'Answer':'Approve'}</button> <button class="btn s" onclick="R[${i}].d='Fixed';renderR();toast('Opened for editing (prototype)')">Fix</button>`}</td></tr>`).join('')+'</table>';if(!left)toast('Weekly review done. See you next Monday.')}
+renderR();
+
+// S9 invites
+const inv=[['Sam Patel · Sales lead','Asker','Joined'],['Lena Ortiz · Support','Asker','Joined'],['Tom Reid · Bids','Asker','Invited']];
+function renderInv(){$('#invTable').innerHTML='<tr><th>Person</th><th>Role</th><th>Status</th></tr>'+inv.map(i=>`<tr><td>${i[0]}</td><td>${i[1]}</td><td><span class="pill ${i[2]==='Joined'?'ok':''}">${i[2]}</span></td></tr>`).join('')}
+function invite(){const e=$('#inv').value.trim();if(!e.includes('@'))return toast('Enter an email address');inv.push([e,$('#invRole').value,'Invited']);$('#inv').value='';renderInv();toast('Invite sent (prototype, nothing is actually sent)')}
+renderInv();
+
+// Feedback
+const FK='pb-proto-fb';const fbGet=()=>JSON.parse(localStorage.getItem(FK)||'[]');
+function openFb(){$('#fb').classList.add('open');$('#fbText').focus();renderFb()}function closeFb(){$('#fb').classList.remove('open')}
+function saveFb(){const t=$('#fbText').value.trim();if(!t)return;const a=fbGet();a.push({s:'S'+cur,t:S[cur-1].dataset.t,n:t,at:new Date().toLocaleString('en-GB')});localStorage.setItem(FK,JSON.stringify(a));$('#fbText').value='';renderFb();toast('Note saved for S'+cur)}
+function renderFb(){const a=fbGet();$('#fbList').innerHTML=a.length?a.map((f,i)=>`<div style="border-top:1px solid var(--line);padding:8px 0"><b>${f.s}</b> · ${f.at} <a href="#" onclick="delFb(${i});return false">delete</a><br>${f.n.replace(/</g,'&lt;')}</div>`).join(''):'No notes yet.'}
+function delFb(i){const a=fbGet();a.splice(i,1);localStorage.setItem(FK,JSON.stringify(a));renderFb()}
+function copyFb(){const a=fbGet();const txt=a.map(f=>`${f.s} (${f.t}): ${f.n}`).join('\n');if(!txt)return toast('No notes yet');navigator.clipboard.writeText(txt).then(()=>toast('Copied. Paste it into chat.'),()=>{prompt('Copy your feedback:',txt)})}
+
+const h=+(location.hash.match(/s(\d)/)||[])[1];go(h>=1&&h<=9?h:1);
+</script>
+</body></html>
